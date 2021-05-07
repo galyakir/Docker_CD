@@ -43,7 +43,8 @@
         state: started
       become: true
 
-    - name: create .env file
+    - name: create .env
+      include_vars: vars.yml
       copy:
         dest: ".env"
         content: |
@@ -60,9 +61,10 @@
           PGDATABASE=postgres
           PGPASSWORD=postgres
           PGPORT=5432
-      include_vars: vars.yml
+
 
     - name: update OKTA application
+      include_vars: vars.yml
       uri:
         url: 'https://{{okta_url}}/api/v1/apps/{{okta_id}}'
         method: PUT
@@ -89,7 +91,6 @@
           Authorization: 'SSWS {{okta_key}}'
       register: result
       run_once: true
-      include_vars: vars.yml
 
     - name: Remove Stoped docker containers
       shell: sudo docker rm --force $(docker ps -a -q);
