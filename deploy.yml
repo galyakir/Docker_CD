@@ -60,7 +60,7 @@
           PGDATABASE=postgres
           PGPASSWORD=postgres
           PGPORT=5432
-        include_vars: vars.yml
+      include_vars: vars.yml
 
     - name: update OKTA application
       uri:
