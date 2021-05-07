@@ -2,8 +2,7 @@
 
 - hosts: staging
   become: yes
-  vars_files:
-    - vars.yml
+
   tasks:
 
     - name: installa dependency
@@ -61,6 +60,7 @@
           PGDATABASE=postgres
           PGPASSWORD=postgres
           PGPORT=5432
+      include_vars: vars.yml
 
     - name: update OKTA application
       uri:
@@ -89,6 +89,7 @@
           Authorization: 'SSWS {{okta_key}}'
       register: result
       run_once: true
+    include_vars: vars.yml
 
     - name: Remove Stoped docker containers
       shell: sudo docker rm --force $(docker ps -a -q);
