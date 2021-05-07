@@ -2,7 +2,7 @@
 
 - hosts: staging
   become: yes
-
+  include_vars: vars.yml
   tasks:
 
     - name: installa dependency
@@ -44,7 +44,6 @@
       become: true
 
     - name: create .env
-      include_vars: vars.yml
       copy:
         dest: ".env"
         content: |
@@ -62,9 +61,7 @@
           PGPASSWORD=postgres
           PGPORT=5432
 
-
     - name: update OKTA application
-      include_vars: vars.yml
       uri:
         url: 'https://{{okta_url}}/api/v1/apps/{{okta_id}}'
         method: PUT
