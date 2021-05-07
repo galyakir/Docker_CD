@@ -1,0 +1,97 @@
+---
+- hosts: ${hosts_name}
+  become: yes
+  vars_files:
+    - vars.yml
+  tasks:
+
+    - name: installa dependency
+      apt:
+        name: "{{item}}"
+        state: present
+        update_cache: yes
+      loop:
+        - apt-transport-https
+        - ca-certificates
+        - curl
+        - gnupg-agent
+        - software-properties-common
+
+    - name: add GPG key
+      apt_key:
+        url: https://download.docker.com/linux/ubuntu/gpg
+        state: present
+
+    - name: add docker repository to apt
+      apt_repository:
+        repo: deb https://download.docker.com/linux/ubuntu bionic stable
+        state: present
+
+    - name: install docker
+      apt:
+        name: "{{item}}"
+        state: latest
+        update_cache: yes
+      loop:
+        - docker-ce
+        - docker-ce-cli
+        - containerd.io
+
+    - name: Ensure docker deamon is running
+      service:
+        name: docker
+        state: started
+      become: true
+
+    - name: create .env file
+      copy:
+        dest: ".env"
+        content: |
+          PORT=8080
+          HOST=0.0.0.0
+          NODE_ENV=development
+          HOST_URL=http://${host_url}:8080
+          COOKIE_ENCRYPT_PWD=superAwesomePasswordStringThatIsAtLeast32CharactersLong!
+          OKTA_ORG_URL=https://${okta_url}
+          OKTA_CLIENT_ID=${okta_id}
+          OKTA_CLIENT_SECRET=${okta_secret}
+          PGHOST=${db_host}
+          PGUSERNAME=postgres
+          PGDATABASE=postgres
+          PGPASSWORD=postgres
+          PGPORT=5432
+
+    - name: update OKTA application
+      uri:
+        url: 'https://${okta_url}/api/v1/apps/${okta_id}'
+        method: PUT
+        body:
+          {"name":"oidc_client",
+           "label": "${okta_label}",
+           "credentials":
+             {"oauthClient":
+                {"autoKeyRotation":true,
+                 "client_id":"${okta_id}",
+                 "token_endpoint_auth_method":"client_secret_basic"}},
+           "settings":
+             {"oauthClient":
+                {"redirect_uris":["http://${host_url}:8080/authorization-code/callback"],
+                 "post_logout_redirect_uris":["http://${host_url}:8080/logout"],
+                 "response_types":["code"],
+                 "application_type":"web",
+                 "consent_method":"TRUSTED",
+                 "issuer_mode":"ORG_URL"}}}
+        body_format: json
+        headers:
+          Accept: 'application/json'
+          Content-Type: 'application/json'
+          Authorization: 'SSWS ${okta_key}'
+      register: result
+      run_once: true
+
+    - name: Remove Stoped docker containers
+      shell: sudo docker rm --force $(docker ps -a -q);
+      ignore_errors: yes
+
+    - name: run image
+      shell: sudo docker run -d --env-file .env -p 8080:8080 --network host galyakir/webapp:latest
