@@ -2,7 +2,6 @@
 
 - hosts: staging
   become: yes
-  include_vars: vars.yml
   tasks:
 
     - name: installa dependency
