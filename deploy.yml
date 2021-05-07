@@ -2,6 +2,8 @@
 
 - hosts: staging
   become: yes
+  vars_files:
+    - vars.yml
   tasks:
 
     - name: installa dependency
@@ -42,7 +44,7 @@
         state: started
       become: true
 
-    - name: create .env
+    - name: create .env file
       copy:
         dest: ".env"
         content: |
