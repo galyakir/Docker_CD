@@ -29,12 +29,12 @@ pipeline {
            }
         }
 
-        // deploy application to פרםג
+        // deploy application to prod
         stage ('prod - deploy') {
             steps {
              withAWS(region:'us-east-1',credentials:'awsCredentials') {
-              s3Download bucket: 'web-app-bucket-gal/prod', file: "inventory", path: "inventory"
-              s3Download bucket: 'web-app-bucket-gal/prod', file: "deploy.yml", path: "deploy.yml"
+              s3Download bucket: 'web-app-bucket-gal/prod', file: "inventory", path: "inventory", force=true
+              s3Download bucket: 'web-app-bucket-gal/prod', file: "deploy.yml", path: "deploy.yml", force=true
                }
                sh 'ansible-playbook deploy.yml'
             }
