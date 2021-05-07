@@ -51,12 +51,12 @@
           PORT=8080
           HOST=0.0.0.0
           NODE_ENV=development
-          HOST_URL=http://{{host_url}}:8080
+          HOST_URL=http://{{ host_url }}:8080
           COOKIE_ENCRYPT_PWD=superAwesomePasswordStringThatIsAtLeast32CharactersLong!
-          OKTA_ORG_URL=https://{{okta_url}}
-          OKTA_CLIENT_ID={{okta_id}}
-          OKTA_CLIENT_SECRET={{okta_secret}}
-          PGHOST={{db_host}}
+          OKTA_ORG_URL=https://{{ okta_url }}
+          OKTA_CLIENT_ID={{ okta_id }}
+          OKTA_CLIENT_SECRET={{ okta_secret }}
+          PGHOST={{ db_host }}
           PGUSERNAME=postgres
           PGDATABASE=postgres
           PGPASSWORD=postgres
@@ -64,11 +64,11 @@
 
     - name: update OKTA application
       uri:
-        url: 'https://{{okta_url}}/api/v1/apps/{{okta_id}}'
+        url: 'https://{{ okta_url }}/api/v1/apps/{{ okta_id }}'
         method: PUT
         body:
           {"name":"oidc_client",
-           "label": "{{okta_label}}",
+           "label": "{{ okta_label }}",
            "credentials":
              {"oauthClient":
                 {"autoKeyRotation":true,
@@ -77,7 +77,7 @@
            "settings":
              {"oauthClient":
                 {"redirect_uris":["http://{{host_url}}:8080/authorization-code/callback"],
-                 "post_logout_redirect_uris":["http://{{host_url}}:8080/logout"],
+                 "post_logout_redirect_uris":["http://{{ host_url }}:8080/logout"],
                  "response_types":["code"],
                  "application_type":"web",
                  "consent_method":"TRUSTED",
@@ -86,7 +86,7 @@
         headers:
           Accept: 'application/json'
           Content-Type: 'application/json'
-          Authorization: 'SSWS {{okta_key}}'
+          Authorization: 'SSWS {{ okta_key }}'
       register: result
       run_once: true
 
