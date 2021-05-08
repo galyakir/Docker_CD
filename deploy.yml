@@ -96,4 +96,4 @@
 
     - name: run image
       shell: docker run -d --env-file .env -p 8080:8080 --restart unless-stopped galyakir/webapp:latest
-      strategy: linear
+      throttle: 1
