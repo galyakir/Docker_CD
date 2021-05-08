@@ -4,10 +4,10 @@
   become: yes
   vars_files:
     - vars.yml
-    - cli.yml
+    - ecr_car.yml
   tasks:
     - include: tasks/cli.yml
-      -
+
     - name: installa dependency
       apt:
         name: "{{item}}"
