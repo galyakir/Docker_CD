@@ -4,7 +4,6 @@
   become: yes
   vars_files:
     - vars.yml
-
     - name: installa dependency
       apt:
         name: "{{item}}"
