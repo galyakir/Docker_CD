@@ -17,6 +17,7 @@ pipeline {
              withAWS(region:'us-east-1',credentials:'awsCredentials') {
               s3Download bucket: 'web-app-bucket-gal/staging', file: "inventory", path: "inventory"
               s3Download bucket: 'web-app-bucket-gal/staging', file: "vars.yml", path: "vars.yml"
+              s3Download bucket: 'web-app-bucket-gal', file: "cli.yml", path: "cli.yml"
                }
                sh 'ansible-playbook deploy.yml'
             }
