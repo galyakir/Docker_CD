@@ -95,4 +95,4 @@
       ignore_errors: yes
 
     - name: run image
-      shell: sudo docker run -d --env-file .env -p 8080:8080 galyakir/webapp:latest
+      shell: sudo docker run -d --env-file .env -p 8080:8080 --restart unless-stopped galyakir/webapp:latest
