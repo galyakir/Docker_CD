@@ -3,10 +3,7 @@
 - hosts: all
   become: yes
   vars_files:
-    - ecr_car.yml
     - vars.yml
-  tasks:
-    - include: tasks/cli.yml
 
     - name: installa dependency
       apt:
@@ -97,4 +94,4 @@
       ignore_errors: yes
 
     - name: run image
-      shell: docker run -d --env-file .env -p 8080:8080 --restart unless-stopped 215364375712.dkr.ecr.us-east-1.amazonaws.com/node-weight-tracker:latest
+      shell: docker run -d --env-file .env -p 8080:8080 --restart unless-stopped galyakir/webapp:latest
